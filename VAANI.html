@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap" rel="stylesheet" />
     <style>
         :root {
-            --saffron: #FF6B00;
+            --accent: #FF6B00;
             --deep: #0A0A1A;
             --card: #13132A;
             --border: #2A2A4A;
@@ -17,6 +17,43 @@
             --red: #FF4444;
             --text: #E8E8FF;
             --muted: #7878AA;
+            --glow: rgba(255, 107, 0, 0.3);
+        }
+
+        /* Tamil - Orange (default) */
+        body.lang-tamil {
+            --accent: #FF6B00;
+            --glow: rgba(255, 107, 0, 0.3);
+            --deep: #0A0A1A;
+            --card: #13132A;
+            --border: #2A2A4A;
+        }
+
+        /* Hindi - Deep Purple */
+        body.lang-hindi {
+            --accent: #9C27B0;
+            --glow: rgba(156, 39, 176, 0.35);
+            --deep: #0D0A14;
+            --card: #1A1025;
+            --border: #3A2A4A;
+        }
+
+        /* Telugu - Deep Blue */
+        body.lang-telugu {
+            --accent: #1565C0;
+            --glow: rgba(21, 101, 192, 0.35);
+            --deep: #070B14;
+            --card: #0D1525;
+            --border: #1A2A4A;
+        }
+
+        /* Malayalam - Deep Green */
+        body.lang-malayalam {
+            --accent: #00695C;
+            --glow: rgba(0, 105, 92, 0.35);
+            --deep: #070E0D;
+            --card: #0D1A18;
+            --border: #1A3A35;
         }
 
         * {
@@ -33,6 +70,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            transition: background 0.6s ease, color 0.6s ease;
         }
 
         body::before {
@@ -40,10 +78,11 @@
             position: fixed;
             inset: 0;
             background:
-                radial-gradient(ellipse 60% 40% at 20% 20%, rgba(255, 107, 0, 0.08) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 50% at 80% 80%, rgba(0, 100, 255, 0.06) 0%, transparent 60%);
+                radial-gradient(ellipse 60% 40% at 20% 20%, var(--glow) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 50% at 80% 80%, var(--glow) 0%, transparent 60%);
             pointer-events: none;
             z-index: 0;
+            transition: background 0.6s ease;
         }
 
         header {
@@ -55,6 +94,7 @@
             justify-content: space-between;
             position: relative;
             z-index: 1;
+            transition: border-color 0.6s;
         }
 
         .logo {
@@ -66,12 +106,13 @@
         .logo-icon {
             width: 40px;
             height: 40px;
-            background: var(--saffron);
+            background: var(--accent);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
+            transition: background 0.6s;
         }
 
         .logo-text h1 {
@@ -89,14 +130,15 @@
         }
 
         .badge {
-            background: rgba(255, 107, 0, 0.15);
-            border: 1px solid rgba(255, 107, 0, 0.3);
-            color: var(--saffron);
+            background: color-mix(in srgb, var(--accent) 20%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+            color: var(--accent);
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
             letter-spacing: 1px;
+            transition: all 0.6s;
         }
 
         .container {
@@ -129,15 +171,44 @@
             padding: 14px 10px;
             border-radius: 14px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             text-align: center;
             font-family: 'Baloo 2', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lang-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: 12px;
+        }
+
+        .lang-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .lang-btn:hover::after {
+            opacity: 0.08;
+        }
+
+        .lang-btn.active {
+            border-color: var(--accent);
+            background: color-mix(in srgb, var(--accent) 15%, var(--card));
+            box-shadow: 0 0 24px var(--glow);
+            transform: translateY(-2px);
         }
 
         .lang-btn .native {
             font-size: 18px;
             font-weight: 600;
             display: block;
+            position: relative;
+            z-index: 1;
         }
 
         .lang-btn .english {
@@ -145,21 +216,67 @@
             color: var(--muted);
             margin-top: 2px;
             display: block;
-        }
-
-        .lang-btn:hover {
-            border-color: var(--saffron);
-            background: rgba(255, 107, 0, 0.08);
-        }
-
-        .lang-btn.active {
-            border-color: var(--saffron);
-            background: rgba(255, 107, 0, 0.15);
-            box-shadow: 0 0 20px rgba(255, 107, 0, 0.2);
+            position: relative;
+            z-index: 1;
         }
 
         .lang-btn.active .native {
-            color: var(--saffron);
+            color: var(--accent);
+        }
+
+        /* Language color indicators */
+        .lang-btn[data-lang="ta-IN"] {
+            border-top: 3px solid #FF6B00;
+        }
+
+        .lang-btn[data-lang="hi-IN"] {
+            border-top: 3px solid #9C27B0;
+        }
+
+        .lang-btn[data-lang="te-IN"] {
+            border-top: 3px solid #1565C0;
+        }
+
+        .lang-btn[data-lang="ml-IN"] {
+            border-top: 3px solid #00695C;
+        }
+
+        .location-bar {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            transition: all 0.6s;
+        }
+
+        .location-bar.found {
+            border-color: rgba(0, 230, 118, 0.4);
+        }
+
+        .location-bar.error {
+            border-color: rgba(255, 68, 68, 0.4);
+        }
+
+        .loc-text {
+            color: var(--muted);
+            flex: 1;
+        }
+
+        .loc-btn {
+            background: color-mix(in srgb, var(--accent) 20%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: 'Baloo 2', sans-serif;
+            transition: all 0.3s;
         }
 
         .mic-section {
@@ -184,8 +301,9 @@
             content: '';
             position: absolute;
             border-radius: 50%;
-            border: 2px solid rgba(255, 107, 0, 0.2);
+            border: 2px solid color-mix(in srgb, var(--accent) 30%, transparent);
             animation: ripple 2s ease-out infinite;
+            transition: border-color 0.6s;
         }
 
         .mic-ring::before {
@@ -215,21 +333,22 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: var(--saffron);
+            background: var(--accent);
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 30px;
-            transition: all 0.2s;
-            box-shadow: 0 8px 32px rgba(255, 107, 0, 0.4);
+            transition: all 0.3s;
+            box-shadow: 0 8px 32px var(--glow);
             position: relative;
             z-index: 2;
         }
 
         .mic-btn:hover {
             transform: scale(1.05);
+            box-shadow: 0 12px 40px var(--glow);
         }
 
         .mic-btn:active {
@@ -266,7 +385,7 @@
         }
 
         .mic-status.thinking {
-            color: var(--saffron);
+            color: var(--accent);
         }
 
         .transcript-box {
@@ -280,13 +399,13 @@
             line-height: 1.5;
             color: var(--muted);
             font-style: italic;
-            transition: all 0.2s;
+            transition: all 0.3s;
         }
 
         .transcript-box.has-text {
             color: var(--text);
             font-style: normal;
-            border-color: rgba(255, 107, 0, 0.3);
+            border-color: color-mix(in srgb, var(--accent) 50%, transparent);
         }
 
         .response-card {
@@ -296,6 +415,7 @@
             padding: 18px;
             margin-bottom: 16px;
             display: none;
+            transition: all 0.3s;
         }
 
         .response-card.visible {
@@ -312,7 +432,7 @@
         .response-label {
             font-size: 10px;
             letter-spacing: 2px;
-            color: var(--saffron);
+            color: var(--accent);
             text-transform: uppercase;
             font-weight: 600;
         }
@@ -383,9 +503,25 @@
         }
 
         .service-chip:hover {
-            border-color: var(--saffron);
+            border-color: var(--accent);
             color: var(--text);
-            background: rgba(255, 107, 0, 0.06);
+            background: color-mix(in srgb, var(--accent) 8%, var(--card));
+            transform: translateY(-1px);
+        }
+
+        /* Lang switch animation */
+        .lang-switch-flash {
+            animation: flashBg 0.5s ease;
+        }
+
+        @keyframes flashBg {
+            0% {
+                opacity: 0.7;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         footer {
@@ -400,7 +536,7 @@
     </style>
 </head>
 
-<body>
+<body class="lang-tamil">
 
     <header>
         <div class="logo">
@@ -417,22 +553,33 @@
 
         <p class="section-label">1. Choose Your Language / மொழி தேர்வு</p>
         <div class="lang-grid">
-            <button class="lang-btn active" data-lang="ta-IN" data-name="Tamil" onclick="selectLang(this)">
+            <button class="lang-btn active" data-lang="ta-IN" data-name="Tamil" data-theme="lang-tamil"
+                onclick="selectLang(this)">
                 <span class="native">தமிழ்</span>
-                <span class="english">Tamil</span>
+                <span class="english">Tamil 🟠</span>
             </button>
-            <button class="lang-btn" data-lang="hi-IN" data-name="Hindi" onclick="selectLang(this)">
+            <button class="lang-btn" data-lang="hi-IN" data-name="Hindi" data-theme="lang-hindi"
+                onclick="selectLang(this)">
                 <span class="native">हिंदी</span>
-                <span class="english">Hindi</span>
+                <span class="english">Hindi 🟣</span>
             </button>
-            <button class="lang-btn" data-lang="te-IN" data-name="Telugu" onclick="selectLang(this)">
+            <button class="lang-btn" data-lang="te-IN" data-name="Telugu" data-theme="lang-telugu"
+                onclick="selectLang(this)">
                 <span class="native">తెలుగు</span>
-                <span class="english">Telugu</span>
+                <span class="english">Telugu 🔵</span>
             </button>
-            <button class="lang-btn" data-lang="ml-IN" data-name="Malayalam" onclick="selectLang(this)">
+            <button class="lang-btn" data-lang="ml-IN" data-name="Malayalam" data-theme="lang-malayalam"
+                onclick="selectLang(this)">
                 <span class="native">മലയാളം</span>
-                <span class="english">Malayalam</span>
+                <span class="english">Malayalam 🟢</span>
             </button>
+        </div>
+
+        <!-- Location Bar -->
+        <div class="location-bar" id="locationBar">
+            <span>📍</span>
+            <span class="loc-text" id="locText">Location not enabled — needed for nearby hospitals</span>
+            <button class="loc-btn" onclick="getLocation()">Enable</button>
         </div>
 
         <p class="section-label">2. Speak / பேசுங்கள்</p>
@@ -449,16 +596,16 @@
         <div class="response-card" id="responseCard">
             <div class="response-header">
                 <span class="response-label">🤖 VAANI Response</span>
-                <button class="speak-btn" id="speakBtn" onclick="speakResponse()">🔊 Listen</button>
+                <button class="speak-btn" onclick="speakResponse()">🔊 Listen</button>
             </div>
             <div class="response-text" id="responseText"></div>
         </div>
 
         <p class="services-label">Quick Questions / விரைவு கேள்விகள்</p>
         <div class="services-grid">
-            <div class="service-chip" onclick="askQuick('ration card status and available items')">🍚 Ration Card</div>
-            <div class="service-chip" onclick="askQuick('government hospital free treatment')">🏥 Hospital</div>
-            <div class="service-chip" onclick="askQuick('bus timings information')">🚌 Bus Timings</div>
+            <div class="service-chip" onclick="askQuick('ration card items available')">🍚 Ration Card</div>
+            <div class="service-chip" onclick="askQuick('government hospital near me')">🏥 Hospital</div>
+            <div class="service-chip" onclick="askQuick('TNSTC bus timings information')">🚌 Bus Timings</div>
             <div class="service-chip" onclick="askQuick('Aadhaar card help and update')">🪪 Aadhaar</div>
         </div>
 
@@ -474,17 +621,52 @@
         let recognition = null;
         let isRecording = false;
         let lastResponse = '';
+        let userLat = null;
+        let userLon = null;
 
-        // Preload voices on page load
-        window.speechSynthesis.onvoiceschanged = () => {
-            window.speechSynthesis.getVoices();
-        };
+        if (window.speechSynthesis) {
+            window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+        }
+
+        getLocation();
 
         function selectLang(btn) {
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             selectedLang = btn.dataset.lang;
             selectedLangName = btn.dataset.name;
+
+            // Change body theme class
+            const theme = btn.dataset.theme;
+            document.body.className = theme + ' lang-switch-flash';
+            setTimeout(() => {
+                document.body.classList.remove('lang-switch-flash');
+            }, 500);
+        }
+
+        function getLocation() {
+            const bar = document.getElementById('locationBar');
+            const text = document.getElementById('locText');
+            text.textContent = 'Getting your location…';
+            if (!navigator.geolocation) {
+                text.textContent = 'Location not supported on this browser';
+                bar.classList.add('error');
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    userLat = pos.coords.latitude;
+                    userLon = pos.coords.longitude;
+                    text.textContent = `✅ Location found (${userLat.toFixed(3)}, ${userLon.toFixed(3)})`;
+                    bar.classList.add('found');
+                    bar.querySelector('.loc-btn').textContent = 'Refresh';
+                },
+                () => {
+                    text.textContent = 'Location denied — hospital search may not work';
+                    bar.classList.add('error');
+                },
+                { timeout: 10000, enableHighAccuracy: true }
+            );
         }
 
         function toggleMic() {
@@ -495,14 +677,12 @@
         function startRecording() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                showError('Speech recognition not supported. Please use Chrome or Edge.');
+                showError('Speech recognition not supported. Please use Chrome.');
                 return;
             }
-
             recognition = new SpeechRecognition();
             recognition.lang = selectedLang;
             recognition.interimResults = true;
-            recognition.maxAlternatives = 1;
 
             recognition.onstart = () => {
                 isRecording = true;
@@ -526,15 +706,12 @@
                 document.getElementById('micBtn').textContent = '🎙️';
                 document.getElementById('micStatus').textContent = 'Tap to speak';
                 document.getElementById('micStatus').className = 'mic-status';
-
                 const text = document.getElementById('transcriptBox').textContent;
-                if (text && text !== 'Your voice will appear here…') {
-                    sendToAI(text);
-                }
+                if (text && text !== 'Your voice will appear here…') sendToAI(text);
             };
 
             recognition.onerror = (e) => {
-                showError('Microphone error: ' + e.error + '. Please allow microphone access.');
+                showError('Microphone error: ' + e.error);
                 stopRecording();
             };
 
@@ -552,22 +729,21 @@
             document.getElementById('responseCard').classList.remove('visible');
 
             try {
+                const body = { message: text, language: selectedLangName, langCode: selectedLang };
+                if (userLat && userLon) { body.lat = userLat; body.lon = userLon; }
+
                 const res = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text, language: selectedLangName, langCode: selectedLang })
+                    body: JSON.stringify(body)
                 });
 
                 if (!res.ok) throw new Error('Server error: ' + res.status);
-
                 const data = await res.json();
                 lastResponse = data.reply;
                 document.getElementById('responseText').textContent = data.reply;
                 document.getElementById('responseCard').classList.add('visible');
-
-                // Auto speak response
                 speakResponse();
-
             } catch (err) {
                 showError('Could not get response: ' + err.message);
             } finally {
@@ -578,27 +754,15 @@
         }
 
         function speakResponse() {
-            if (!lastResponse) return;
+            if (!lastResponse || !window.speechSynthesis) return;
             window.speechSynthesis.cancel();
-
             const utter = new SpeechSynthesisUtterance(lastResponse);
             utter.lang = selectedLang;
             utter.rate = 0.85;
-            utter.pitch = 1;
-
-            // Find best matching voice for selected language
             const voices = window.speechSynthesis.getVoices();
-            const langCode = selectedLang.split('-')[0]; // e.g. 'ta' from 'ta-IN'
-
-            // Try exact match first, then language prefix match
-            const matchedVoice =
-                voices.find(v => v.lang === selectedLang) ||
-                voices.find(v => v.lang.startsWith(langCode)) ||
-                voices.find(v => v.lang.startsWith('en-IN')) ||
-                null;
-
-            if (matchedVoice) utter.voice = matchedVoice;
-
+            const langCode = selectedLang.split('-')[0];
+            const voice = voices.find(v => v.lang === selectedLang) || voices.find(v => v.lang.startsWith(langCode)) || null;
+            if (voice) utter.voice = voice;
             window.speechSynthesis.speak(utter);
         }
 
