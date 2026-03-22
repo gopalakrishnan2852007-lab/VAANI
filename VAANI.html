@@ -21,52 +21,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: #0A0A1A;
+            background: #050A18;
             transition: background 0.6s ease;
-        }
-
-        /* Tamil - Orange */
-        body.lang-tamil {
-            background: #0A0A1A;
-        }
-
-        body.lang-tamil .glow-bg {
-            background:
-                radial-gradient(ellipse 60% 40% at 20% 20%, rgba(255, 107, 0, 0.12) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 50% at 80% 80%, rgba(255, 107, 0, 0.08) 0%, transparent 60%);
-        }
-
-        /* Hindi - Deep Purple */
-        body.lang-hindi {
-            background: #0D0A14;
-        }
-
-        body.lang-hindi .glow-bg {
-            background:
-                radial-gradient(ellipse 60% 40% at 20% 20%, rgba(156, 39, 176, 0.15) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 50% at 80% 80%, rgba(156, 39, 176, 0.1) 0%, transparent 60%);
-        }
-
-        /* Telugu - Deep Blue */
-        body.lang-telugu {
-            background: #070B14;
-        }
-
-        body.lang-telugu .glow-bg {
-            background:
-                radial-gradient(ellipse 60% 40% at 20% 20%, rgba(21, 101, 192, 0.15) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 50% at 80% 80%, rgba(21, 101, 192, 0.1) 0%, transparent 60%);
-        }
-
-        /* Malayalam - Deep Green */
-        body.lang-malayalam {
-            background: #070E0D;
-        }
-
-        body.lang-malayalam .glow-bg {
-            background:
-                radial-gradient(ellipse 60% 40% at 20% 20%, rgba(0, 105, 92, 0.15) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 50% at 80% 80%, rgba(0, 105, 92, 0.1) 0%, transparent 60%);
+            --accent: #2979FF;
+            --accent-glow: rgba(41, 121, 255, 0.4);
         }
 
         .glow-bg {
@@ -75,48 +33,9 @@
             pointer-events: none;
             z-index: 0;
             transition: background 0.6s ease;
-        }
-
-        /* Cards adapt to theme */
-        body.lang-tamil .card-bg {
-            background: #13132A;
-            border-color: #2A2A4A;
-        }
-
-        body.lang-hindi .card-bg {
-            background: #1A1025;
-            border-color: #3A2A4A;
-        }
-
-        body.lang-telugu .card-bg {
-            background: #0D1525;
-            border-color: #1A2A4A;
-        }
-
-        body.lang-malayalam .card-bg {
-            background: #0D1A18;
-            border-color: #1A3A35;
-        }
-
-        /* Accent colors per language */
-        body.lang-tamil {
-            --accent: #FF6B00;
-            --accent-glow: rgba(255, 107, 0, 0.4);
-        }
-
-        body.lang-hindi {
-            --accent: #9C27B0;
-            --accent-glow: rgba(156, 39, 176, 0.4);
-        }
-
-        body.lang-telugu {
-            --accent: #1E88E5;
-            --accent-glow: rgba(30, 136, 229, 0.4);
-        }
-
-        body.lang-malayalam {
-            --accent: #00897B;
-            --accent-glow: rgba(0, 137, 123, 0.4);
+            background:
+                radial-gradient(ellipse 60% 40% at 20% 20%, rgba(30, 100, 255, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 50% at 80% 80%, rgba(30, 100, 255, 0.08) 0%, transparent 60%);
         }
 
         header {
@@ -198,8 +117,8 @@
         }
 
         .lang-btn {
-            background: #13132A;
-            border: 2px solid #2A2A4A;
+            background: #0A1628;
+            border: 2px solid #1A2A4A;
             color: #E8E8FF;
             padding: 14px 10px;
             border-radius: 14px;
@@ -209,61 +128,14 @@
             font-family: 'Baloo 2', sans-serif;
         }
 
-        /* Each button has its own color top bar */
-        .lang-btn[data-lang="ta-IN"] {
-            border-top: 3px solid #FF6B00;
+        .lang-btn.active {
+            border-color: var(--accent);
+            background: rgba(41, 121, 255, 0.15);
+            box-shadow: 0 0 24px rgba(41, 121, 255, 0.3);
         }
 
-        .lang-btn[data-lang="hi-IN"] {
-            border-top: 3px solid #9C27B0;
-        }
-
-        .lang-btn[data-lang="te-IN"] {
-            border-top: 3px solid #1E88E5;
-        }
-
-        .lang-btn[data-lang="ml-IN"] {
-            border-top: 3px solid #00897B;
-        }
-
-        .lang-btn[data-lang="ta-IN"].active {
-            border-color: #FF6B00;
-            background: rgba(255, 107, 0, 0.15);
-            box-shadow: 0 0 24px rgba(255, 107, 0, 0.3);
-        }
-
-        .lang-btn[data-lang="hi-IN"].active {
-            border-color: #9C27B0;
-            background: rgba(156, 39, 176, 0.15);
-            box-shadow: 0 0 24px rgba(156, 39, 176, 0.3);
-        }
-
-        .lang-btn[data-lang="te-IN"].active {
-            border-color: #1E88E5;
-            background: rgba(30, 136, 229, 0.15);
-            box-shadow: 0 0 24px rgba(30, 136, 229, 0.3);
-        }
-
-        .lang-btn[data-lang="ml-IN"].active {
-            border-color: #00897B;
-            background: rgba(0, 137, 123, 0.15);
-            box-shadow: 0 0 24px rgba(0, 137, 123, 0.3);
-        }
-
-        .lang-btn[data-lang="ta-IN"].active .native {
-            color: #FF6B00;
-        }
-
-        .lang-btn[data-lang="hi-IN"].active .native {
-            color: #9C27B0;
-        }
-
-        .lang-btn[data-lang="te-IN"].active .native {
-            color: #1E88E5;
-        }
-
-        .lang-btn[data-lang="ml-IN"].active .native {
-            color: #00897B;
+        .lang-btn.active .native {
+            color: var(--accent);
         }
 
         .lang-btn:hover {
@@ -284,8 +156,8 @@
         }
 
         .location-bar {
-            background: #13132A;
-            border: 1px solid #2A2A4A;
+            background: #0A1628;
+            border: 1px solid #1A2A4A;
             border-radius: 12px;
             padding: 10px 14px;
             margin-bottom: 20px;
@@ -429,8 +301,8 @@
         }
 
         .transcript-box {
-            background: #13132A;
-            border: 1px solid #2A2A4A;
+            background: #0A1628;
+            border: 1px solid #1A2A4A;
             border-radius: 14px;
             padding: 14px 16px;
             margin-bottom: 16px;
@@ -449,8 +321,8 @@
         }
 
         .response-card {
-            background: #13132A;
-            border: 1px solid #2A2A4A;
+            background: #0A1628;
+            border: 1px solid #1A2A4A;
             border-radius: 16px;
             padding: 18px;
             margin-bottom: 16px;
@@ -527,8 +399,8 @@
         }
 
         .service-chip {
-            background: #13132A;
-            border: 1px solid #2A2A4A;
+            background: #0A1628;
+            border: 1px solid #1A2A4A;
             border-radius: 10px;
             padding: 10px 12px;
             font-size: 12px;
@@ -558,7 +430,7 @@
     </style>
 </head>
 
-<body class="lang-tamil">
+<body>
 
     <!-- Glow background div -->
     <div class="glow-bg"></div>
@@ -658,8 +530,6 @@
             selectedLang = btn.dataset.lang;
             selectedLangName = btn.dataset.name;
 
-            // Change body class for theme
-            document.body.className = btn.dataset.theme;
         }
 
         function getLocation() {
@@ -769,8 +639,9 @@
             utter.lang = selectedLang;
             utter.rate = 0.85;
             const voices = window.speechSynthesis.getVoices();
-            const langCode = selectedLang.split('-')[0];
-            const voice = voices.find(v => v.lang === selectedLang) || voices.find(v => v.lang.startsWith(langCode)) || null;
+            const voice = voices.find(v => v.lang === selectedLang)
+                || voices.find(v => v.lang.startsWith(selectedLang.split('-')[0]))
+                || null;
             if (voice) utter.voice = voice;
             window.speechSynthesis.speak(utter);
         }

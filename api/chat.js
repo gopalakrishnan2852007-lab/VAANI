@@ -146,10 +146,9 @@ Answer ONLY in ${language} language. Keep under 100 words. Be specific and helpf
     }
 
     // ALL OTHER QUERIES — General Gemini
-    const prompt = `You are VAANI, an expert Indian government services assistant for Tamil Nadu.
-Answer ONLY in ${language} language. Keep answers under 100 words. Be simple, accurate and clear.
-Help with: ration cards, hospitals, bus timings, Aadhaar, PAN card, government schemes, welfare schemes.
-For Tamil Nadu specific info, mention relevant department names and helpline numbers.
+    const prompt = `You are VAANI. The user is speaking in ${language}.
+You MUST reply ONLY in ${language} language — no English at all.
+Answer questions about Indian government services: ration cards, hospitals, bus timings, Aadhaar, PAN card, schemes.
 User question: ${message}`;
 
     const geminiRes = await fetch(
@@ -165,8 +164,9 @@ User question: ${message}`;
     );
 
     const data = await geminiRes.json();
-    if (data.error) {
-      return res.status(500).json({ error: 'Gemini API error: ' + data.error.message });
+    if (!geminiRes.ok || data.error) {
+      console.error('Gemini API error:', data);
+      return res.status(500).json({ error: 'Gemini API error: ' + (data.error?.message || 'Unknown server error') });
     }
 
     const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
