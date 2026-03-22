@@ -47,7 +47,7 @@ User question: ${message}`;
             }
           ],
           generationConfig: {
-            maxOutputTokens: 400,
+            maxOutputTokens: 800,
             temperature: 0.5
           }
         })
