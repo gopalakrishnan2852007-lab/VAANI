@@ -8,54 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap" rel="stylesheet" />
     <style>
-        :root {
-            --accent: #FF6B00;
-            --deep: #0A0A1A;
-            --card: #13132A;
-            --border: #2A2A4A;
-            --green: #00E676;
-            --red: #FF4444;
-            --text: #E8E8FF;
-            --muted: #7878AA;
-            --glow: rgba(255, 107, 0, 0.3);
-        }
-
-        /* Tamil - Orange (default) */
-        body.lang-tamil {
-            --accent: #FF6B00;
-            --glow: rgba(255, 107, 0, 0.3);
-            --deep: #0A0A1A;
-            --card: #13132A;
-            --border: #2A2A4A;
-        }
-
-        /* Hindi - Deep Purple */
-        body.lang-hindi {
-            --accent: #9C27B0;
-            --glow: rgba(156, 39, 176, 0.35);
-            --deep: #0D0A14;
-            --card: #1A1025;
-            --border: #3A2A4A;
-        }
-
-        /* Telugu - Deep Blue */
-        body.lang-telugu {
-            --accent: #1565C0;
-            --glow: rgba(21, 101, 192, 0.35);
-            --deep: #070B14;
-            --card: #0D1525;
-            --border: #1A2A4A;
-        }
-
-        /* Malayalam - Deep Green */
-        body.lang-malayalam {
-            --accent: #00695C;
-            --glow: rgba(0, 105, 92, 0.35);
-            --deep: #070E0D;
-            --card: #0D1A18;
-            --border: #1A3A35;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -64,37 +16,118 @@
 
         body {
             font-family: 'Baloo 2', sans-serif;
-            background: var(--deep);
-            color: var(--text);
+            color: #E8E8FF;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: background 0.6s ease, color 0.6s ease;
+            background: #0A0A1A;
+            transition: background 0.6s ease;
         }
 
-        body::before {
-            content: '';
+        /* Tamil - Orange */
+        body.lang-tamil {
+            background: #0A0A1A;
+        }
+
+        body.lang-tamil .glow-bg {
+            background:
+                radial-gradient(ellipse 60% 40% at 20% 20%, rgba(255, 107, 0, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 50% at 80% 80%, rgba(255, 107, 0, 0.08) 0%, transparent 60%);
+        }
+
+        /* Hindi - Deep Purple */
+        body.lang-hindi {
+            background: #0D0A14;
+        }
+
+        body.lang-hindi .glow-bg {
+            background:
+                radial-gradient(ellipse 60% 40% at 20% 20%, rgba(156, 39, 176, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 50% at 80% 80%, rgba(156, 39, 176, 0.1) 0%, transparent 60%);
+        }
+
+        /* Telugu - Deep Blue */
+        body.lang-telugu {
+            background: #070B14;
+        }
+
+        body.lang-telugu .glow-bg {
+            background:
+                radial-gradient(ellipse 60% 40% at 20% 20%, rgba(21, 101, 192, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 50% at 80% 80%, rgba(21, 101, 192, 0.1) 0%, transparent 60%);
+        }
+
+        /* Malayalam - Deep Green */
+        body.lang-malayalam {
+            background: #070E0D;
+        }
+
+        body.lang-malayalam .glow-bg {
+            background:
+                radial-gradient(ellipse 60% 40% at 20% 20%, rgba(0, 105, 92, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 50% at 80% 80%, rgba(0, 105, 92, 0.1) 0%, transparent 60%);
+        }
+
+        .glow-bg {
             position: fixed;
             inset: 0;
-            background:
-                radial-gradient(ellipse 60% 40% at 20% 20%, var(--glow) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 50% at 80% 80%, var(--glow) 0%, transparent 60%);
             pointer-events: none;
             z-index: 0;
             transition: background 0.6s ease;
         }
 
+        /* Cards adapt to theme */
+        body.lang-tamil .card-bg {
+            background: #13132A;
+            border-color: #2A2A4A;
+        }
+
+        body.lang-hindi .card-bg {
+            background: #1A1025;
+            border-color: #3A2A4A;
+        }
+
+        body.lang-telugu .card-bg {
+            background: #0D1525;
+            border-color: #1A2A4A;
+        }
+
+        body.lang-malayalam .card-bg {
+            background: #0D1A18;
+            border-color: #1A3A35;
+        }
+
+        /* Accent colors per language */
+        body.lang-tamil {
+            --accent: #FF6B00;
+            --accent-glow: rgba(255, 107, 0, 0.4);
+        }
+
+        body.lang-hindi {
+            --accent: #9C27B0;
+            --accent-glow: rgba(156, 39, 176, 0.4);
+        }
+
+        body.lang-telugu {
+            --accent: #1E88E5;
+            --accent-glow: rgba(30, 136, 229, 0.4);
+        }
+
+        body.lang-malayalam {
+            --accent: #00897B;
+            --accent-glow: rgba(0, 137, 123, 0.4);
+        }
+
         header {
             width: 100%;
             padding: 20px 24px 16px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: relative;
             z-index: 1;
-            transition: border-color 0.6s;
         }
 
         .logo {
@@ -112,7 +145,7 @@
             align-items: center;
             justify-content: center;
             font-size: 20px;
-            transition: background 0.6s;
+            transition: background 0.5s;
         }
 
         .logo-text h1 {
@@ -124,21 +157,21 @@
 
         .logo-text p {
             font-size: 10px;
-            color: var(--muted);
+            color: #7878AA;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
         .badge {
-            background: color-mix(in srgb, var(--accent) 20%, transparent);
-            border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+            border: 1px solid var(--accent);
             color: var(--accent);
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
             letter-spacing: 1px;
-            transition: all 0.6s;
+            transition: all 0.5s;
+            background: transparent;
         }
 
         .container {
@@ -152,7 +185,7 @@
         .section-label {
             font-size: 11px;
             letter-spacing: 2px;
-            color: var(--muted);
+            color: #7878AA;
             text-transform: uppercase;
             margin-bottom: 10px;
         }
@@ -165,66 +198,18 @@
         }
 
         .lang-btn {
-            background: var(--card);
-            border: 2px solid var(--border);
-            color: var(--text);
+            background: #13132A;
+            border: 2px solid #2A2A4A;
+            color: #E8E8FF;
             padding: 14px 10px;
             border-radius: 14px;
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
             font-family: 'Baloo 2', sans-serif;
-            position: relative;
-            overflow: hidden;
         }
 
-        .lang-btn::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: var(--accent);
-            opacity: 0;
-            transition: opacity 0.3s;
-            border-radius: 12px;
-        }
-
-        .lang-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .lang-btn:hover::after {
-            opacity: 0.08;
-        }
-
-        .lang-btn.active {
-            border-color: var(--accent);
-            background: color-mix(in srgb, var(--accent) 15%, var(--card));
-            box-shadow: 0 0 24px var(--glow);
-            transform: translateY(-2px);
-        }
-
-        .lang-btn .native {
-            font-size: 18px;
-            font-weight: 600;
-            display: block;
-            position: relative;
-            z-index: 1;
-        }
-
-        .lang-btn .english {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 2px;
-            display: block;
-            position: relative;
-            z-index: 1;
-        }
-
-        .lang-btn.active .native {
-            color: var(--accent);
-        }
-
-        /* Language color indicators */
+        /* Each button has its own color top bar */
         .lang-btn[data-lang="ta-IN"] {
             border-top: 3px solid #FF6B00;
         }
@@ -234,16 +219,73 @@
         }
 
         .lang-btn[data-lang="te-IN"] {
-            border-top: 3px solid #1565C0;
+            border-top: 3px solid #1E88E5;
         }
 
         .lang-btn[data-lang="ml-IN"] {
-            border-top: 3px solid #00695C;
+            border-top: 3px solid #00897B;
+        }
+
+        .lang-btn[data-lang="ta-IN"].active {
+            border-color: #FF6B00;
+            background: rgba(255, 107, 0, 0.15);
+            box-shadow: 0 0 24px rgba(255, 107, 0, 0.3);
+        }
+
+        .lang-btn[data-lang="hi-IN"].active {
+            border-color: #9C27B0;
+            background: rgba(156, 39, 176, 0.15);
+            box-shadow: 0 0 24px rgba(156, 39, 176, 0.3);
+        }
+
+        .lang-btn[data-lang="te-IN"].active {
+            border-color: #1E88E5;
+            background: rgba(30, 136, 229, 0.15);
+            box-shadow: 0 0 24px rgba(30, 136, 229, 0.3);
+        }
+
+        .lang-btn[data-lang="ml-IN"].active {
+            border-color: #00897B;
+            background: rgba(0, 137, 123, 0.15);
+            box-shadow: 0 0 24px rgba(0, 137, 123, 0.3);
+        }
+
+        .lang-btn[data-lang="ta-IN"].active .native {
+            color: #FF6B00;
+        }
+
+        .lang-btn[data-lang="hi-IN"].active .native {
+            color: #9C27B0;
+        }
+
+        .lang-btn[data-lang="te-IN"].active .native {
+            color: #1E88E5;
+        }
+
+        .lang-btn[data-lang="ml-IN"].active .native {
+            color: #00897B;
+        }
+
+        .lang-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .lang-btn .native {
+            font-size: 18px;
+            font-weight: 600;
+            display: block;
+        }
+
+        .lang-btn .english {
+            font-size: 11px;
+            color: #7878AA;
+            margin-top: 2px;
+            display: block;
         }
 
         .location-bar {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: #13132A;
+            border: 1px solid #2A2A4A;
             border-radius: 12px;
             padding: 10px 14px;
             margin-bottom: 20px;
@@ -251,7 +293,6 @@
             align-items: center;
             gap: 10px;
             font-size: 12px;
-            transition: all 0.6s;
         }
 
         .location-bar.found {
@@ -263,19 +304,19 @@
         }
 
         .loc-text {
-            color: var(--muted);
+            color: #7878AA;
             flex: 1;
         }
 
         .loc-btn {
-            background: color-mix(in srgb, var(--accent) 20%, transparent);
-            border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+            border: 1px solid var(--accent);
             color: var(--accent);
             padding: 4px 10px;
             border-radius: 8px;
             font-size: 11px;
             cursor: pointer;
             font-family: 'Baloo 2', sans-serif;
+            background: transparent;
             transition: all 0.3s;
         }
 
@@ -301,9 +342,9 @@
             content: '';
             position: absolute;
             border-radius: 50%;
-            border: 2px solid color-mix(in srgb, var(--accent) 30%, transparent);
+            border: 2px solid var(--accent);
+            opacity: 0.3;
             animation: ripple 2s ease-out infinite;
-            transition: border-color 0.6s;
         }
 
         .mic-ring::before {
@@ -320,7 +361,7 @@
         @keyframes ripple {
             0% {
                 transform: scale(0.8);
-                opacity: 0.8;
+                opacity: 0.6;
             }
 
             100% {
@@ -341,14 +382,13 @@
             justify-content: center;
             font-size: 30px;
             transition: all 0.3s;
-            box-shadow: 0 8px 32px var(--glow);
+            box-shadow: 0 8px 32px var(--accent-glow);
             position: relative;
             z-index: 2;
         }
 
         .mic-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 12px 40px var(--glow);
         }
 
         .mic-btn:active {
@@ -356,7 +396,7 @@
         }
 
         .mic-btn.recording {
-            background: var(--red);
+            background: #FF4444;
             box-shadow: 0 8px 32px rgba(255, 68, 68, 0.5);
             animation: recordPulse 1s ease-in-out infinite;
         }
@@ -375,12 +415,12 @@
 
         .mic-status {
             font-size: 13px;
-            color: var(--muted);
+            color: #7878AA;
             letter-spacing: 0.5px;
         }
 
         .mic-status.recording {
-            color: var(--red);
+            color: #FF4444;
             font-weight: 600;
         }
 
@@ -389,33 +429,32 @@
         }
 
         .transcript-box {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: #13132A;
+            border: 1px solid #2A2A4A;
             border-radius: 14px;
             padding: 14px 16px;
             margin-bottom: 16px;
             min-height: 54px;
             font-size: 15px;
             line-height: 1.5;
-            color: var(--muted);
+            color: #7878AA;
             font-style: italic;
             transition: all 0.3s;
         }
 
         .transcript-box.has-text {
-            color: var(--text);
+            color: #E8E8FF;
             font-style: normal;
-            border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+            border-color: var(--accent);
         }
 
         .response-card {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: #13132A;
+            border: 1px solid #2A2A4A;
             border-radius: 16px;
             padding: 18px;
             margin-bottom: 16px;
             display: none;
-            transition: all 0.3s;
         }
 
         .response-card.visible {
@@ -440,13 +479,12 @@
         .speak-btn {
             background: rgba(0, 230, 118, 0.1);
             border: 1px solid rgba(0, 230, 118, 0.3);
-            color: var(--green);
+            color: #00E676;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 11px;
             cursor: pointer;
             font-family: 'Baloo 2', sans-serif;
-            transition: all 0.2s;
         }
 
         .speak-btn:hover {
@@ -456,7 +494,7 @@
         .response-text {
             font-size: 16px;
             line-height: 1.7;
-            color: var(--text);
+            color: #E8E8FF;
         }
 
         .error-box {
@@ -464,7 +502,7 @@
             border: 1px solid rgba(255, 68, 68, 0.3);
             border-radius: 12px;
             padding: 12px 16px;
-            color: var(--red);
+            color: #FF4444;
             font-size: 13px;
             margin-bottom: 16px;
             display: none;
@@ -477,7 +515,7 @@
         .services-label {
             font-size: 11px;
             letter-spacing: 2px;
-            color: var(--muted);
+            color: #7878AA;
             text-transform: uppercase;
             margin-bottom: 10px;
         }
@@ -489,8 +527,8 @@
         }
 
         .service-chip {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: #13132A;
+            border: 1px solid #2A2A4A;
             border-radius: 10px;
             padding: 10px 12px;
             font-size: 12px;
@@ -499,29 +537,13 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            color: var(--muted);
+            color: #7878AA;
         }
 
         .service-chip:hover {
             border-color: var(--accent);
-            color: var(--text);
-            background: color-mix(in srgb, var(--accent) 8%, var(--card));
+            color: #E8E8FF;
             transform: translateY(-1px);
-        }
-
-        /* Lang switch animation */
-        .lang-switch-flash {
-            animation: flashBg 0.5s ease;
-        }
-
-        @keyframes flashBg {
-            0% {
-                opacity: 0.7;
-            }
-
-            100% {
-                opacity: 1;
-            }
         }
 
         footer {
@@ -529,7 +551,7 @@
             padding: 20px;
             text-align: center;
             font-size: 11px;
-            color: var(--muted);
+            color: #7878AA;
             position: relative;
             z-index: 1;
         }
@@ -537,6 +559,9 @@
 </head>
 
 <body class="lang-tamil">
+
+    <!-- Glow background div -->
+    <div class="glow-bg"></div>
 
     <header>
         <div class="logo">
@@ -575,7 +600,6 @@
             </button>
         </div>
 
-        <!-- Location Bar -->
         <div class="location-bar" id="locationBar">
             <span>📍</span>
             <span class="loc-text" id="locText">Location not enabled — needed for nearby hospitals</span>
@@ -611,9 +635,7 @@
 
     </div>
 
-    <footer>
-        VAANI · Zero cost · Zero app · Just speak · Digital India Mission
-    </footer>
+    <footer>VAANI · Zero cost · Zero app · Just speak · Digital India Mission</footer>
 
     <script>
         let selectedLang = 'ta-IN';
@@ -636,12 +658,8 @@
             selectedLang = btn.dataset.lang;
             selectedLangName = btn.dataset.name;
 
-            // Change body theme class
-            const theme = btn.dataset.theme;
-            document.body.className = theme + ' lang-switch-flash';
-            setTimeout(() => {
-                document.body.classList.remove('lang-switch-flash');
-            }, 500);
+            // Change body class for theme
+            document.body.className = btn.dataset.theme;
         }
 
         function getLocation() {
@@ -649,7 +667,7 @@
             const text = document.getElementById('locText');
             text.textContent = 'Getting your location…';
             if (!navigator.geolocation) {
-                text.textContent = 'Location not supported on this browser';
+                text.textContent = 'Location not supported';
                 bar.classList.add('error');
                 return;
             }
@@ -657,7 +675,7 @@
                 (pos) => {
                     userLat = pos.coords.latitude;
                     userLon = pos.coords.longitude;
-                    text.textContent = `✅ Location found (${userLat.toFixed(3)}, ${userLon.toFixed(3)})`;
+                    text.textContent = '✅ Location found (' + userLat.toFixed(3) + ', ' + userLon.toFixed(3) + ')';
                     bar.classList.add('found');
                     bar.querySelector('.loc-btn').textContent = 'Refresh';
                 },
@@ -676,10 +694,7 @@
 
         function startRecording() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                showError('Speech recognition not supported. Please use Chrome.');
-                return;
-            }
+            if (!SpeechRecognition) { showError('Please use Chrome browser.'); return; }
             recognition = new SpeechRecognition();
             recognition.lang = selectedLang;
             recognition.interimResults = true;
@@ -710,17 +725,11 @@
                 if (text && text !== 'Your voice will appear here…') sendToAI(text);
             };
 
-            recognition.onerror = (e) => {
-                showError('Microphone error: ' + e.error);
-                stopRecording();
-            };
-
+            recognition.onerror = (e) => { showError('Mic error: ' + e.error); stopRecording(); };
             recognition.start();
         }
 
-        function stopRecording() {
-            if (recognition) recognition.stop();
-        }
+        function stopRecording() { if (recognition) recognition.stop(); }
 
         async function sendToAI(text) {
             document.getElementById('micBtn').textContent = '⏳';
@@ -778,9 +787,7 @@
             box.classList.add('visible');
         }
 
-        function hideError() {
-            document.getElementById('errorBox').classList.remove('visible');
-        }
+        function hideError() { document.getElementById('errorBox').classList.remove('visible'); }
     </script>
 </body>
 
