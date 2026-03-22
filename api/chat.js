@@ -11,32 +11,63 @@ const handler = async (req, res) => {
 
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
   if (!GEMINI_API_KEY) {
+    console.error('GEMINI_API_KEY is not set in environment variables');
     return res.status(500).json({ error: 'API key not configured on server' });
   }
 
-  // Detect if user is asking about hospitals
-  const hospitalKeywords = ['hospital', 'மருத்துவமனை', 'ஆஸ்பத்திரி', 'doctor', 'மருத்துவர்', 'treatment', 'சிகிச்சை', 'clinic', 'கிளினிக்'];
+  const hospitalKeywords = ['hospital', 'மருத்துவமனை', 'ஆஸ்பத்திரி', 'doctor', 'மருத்துவர்', 'treatment', 'சிகிச்சை', 'clinic', 'अस्पताल', 'चिकित्सा', 'ആശുപത്രി', 'వైద్యశాల'];
   const isHospitalQuery = hospitalKeywords.some(k => message.toLowerCase().includes(k.toLowerCase()));
 
-  // Detect if user is asking about bus
-  const busKeywords = ['bus', 'பஸ்', 'பேருந்து', 'timing', 'நேரம்', 'route', 'ரூட்', 'transport', 'போக்குவரத்து'];
+  const busKeywords = ['bus', 'பஸ்', 'பேருந்து', 'timing', 'நேரம்', 'route', 'transport', 'బస్', 'बस', 'ബസ്'];
   const isBusQuery = busKeywords.some(k => message.toLowerCase().includes(k.toLowerCase()));
 
+  const callGemini = async (prompt) => {
+    const geminiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig: { maxOutputTokens: 400, temperature: 0.5 }
+        })
+      }
+    );
+
+    if (!geminiRes.ok) {
+      const errData = await geminiRes.json();
+      console.error('Gemini API error response:', JSON.stringify(errData));
+      throw new Error('Gemini API error: ' + (errData.error?.message || geminiRes.status));
+    }
+
+    const data = await geminiRes.json();
+
+    if (data.error) {
+      console.error('Gemini returned error in body:', JSON.stringify(data.error));
+      throw new Error('Gemini error: ' + data.error.message);
+    }
+
+    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+    if (!reply) {
+      console.error('Gemini returned empty reply. Raw:', JSON.stringify(data));
+      throw new Error('Empty reply from Gemini');
+    }
+
+    return reply.trim();
+  };
+
   try {
-    // HOSPITAL QUERY — use OpenStreetMap
+    // HOSPITAL QUERY — OpenStreetMap
     if (isHospitalQuery && lat && lon) {
-      const radius = 5000; // 5km radius
       const overpassQuery = `
         [out:json][timeout:25];
         (
-          node["amenity"="hospital"](around:${radius},${lat},${lon});
-          way["amenity"="hospital"](around:${radius},${lat},${lon});
-          node["amenity"="clinic"](around:${radius},${lat},${lon});
-          node["healthcare"="hospital"](around:${radius},${lat},${lon});
+          node["amenity"="hospital"](around:5000,${lat},${lon});
+          way["amenity"="hospital"](around:5000,${lat},${lon});
+          node["amenity"="clinic"](around:5000,${lat},${lon});
+          node["healthcare"="hospital"](around:5000,${lat},${lon});
         );
-        out body;
-        >;
-        out skel qt;
+        out body; >; out skel qt;
       `;
 
       const osmRes = await fetch('https://overpass-api.de/api/interpreter', {
@@ -51,151 +82,59 @@ const handler = async (req, res) => {
         .map(e => {
           const hlat = e.lat || (e.center && e.center.lat);
           const hlon = e.lon || (e.center && e.center.lon);
-          let distance = '';
-          if (hlat && hlon) {
-            const d = getDistance(lat, lon, hlat, hlon);
-            distance = ` (${d} km)`;
-          }
-          return `${e.tags.name}${distance}`;
+          let dist = '';
+          if (hlat && hlon) dist = ' (' + getDistance(lat, lon, hlat, hlon) + ' km)';
+          return e.tags.name + dist;
         })
         .slice(0, 5);
 
-      if (hospitals.length > 0) {
-        const hospitalList = hospitals.join('\n');
-
-        // Use Gemini to format the response in Tamil
-        const prompt = `You are VAANI. The user asked about nearby hospitals in ${language}.
+      const hospitalPrompt = hospitals.length > 0
+        ? `You are VAANI. The user asked about nearby hospitals. You MUST reply ONLY in ${language} language — no English at all.
 Here are the nearest hospitals found:
-${hospitalList}
+${hospitals.join('\n')}
+Format this as a helpful warm response in ${language}. List hospitals with distances. Also mention free medical helpline 104. Under 120 words.`
+        : `You are VAANI. The user asked about hospitals but none were found nearby. You MUST reply ONLY in ${language} language — no English at all.
+Tell them to: call Tamil Nadu health helpline 104, visit nearest PHC, or check tnhealth.tn.gov.in. Under 80 words.`;
 
-Format this as a helpful, warm response in ${language} language.
-List the hospitals clearly with their distances.
-Also mention they can call 104 for free medical helpline.
-Keep it under 120 words.`;
-
-        const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ role: 'user', parts: [{ text: prompt }] }],
-              generationConfig: { maxOutputTokens: 400, temperature: 0.5 }
-            })
-          }
-        );
-
-        const geminiData = await geminiRes.json();
-        const reply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || hospitalList;
-        return res.status(200).json({ reply: reply.trim(), hospitals });
-      } else {
-        // No hospitals found nearby — ask Gemini
-        const prompt = `You are VAANI. User asked about hospitals near them in ${language} but no nearby hospitals were found in OpenStreetMap.
-Tell them in ${language} to:
-1. Call Tamil Nadu health helpline: 104
-2. Visit nearest PHC (Primary Health Centre)
-3. Check https://www.tnhealth.tn.gov.in for hospital list
-Keep it under 80 words and be helpful.`;
-
-        const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ role: 'user', parts: [{ text: prompt }] }],
-              generationConfig: { maxOutputTokens: 300, temperature: 0.5 }
-            })
-          }
-        );
-        const geminiData = await geminiRes.json();
-        const reply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || 'No hospitals found nearby.';
-        return res.status(200).json({ reply: reply.trim() });
-      }
+      const reply = await callGemini(hospitalPrompt);
+      return res.status(200).json({ reply, hospitals });
     }
 
-    // BUS QUERY — use Gemini with TNSTC knowledge
+    // BUS QUERY
     if (isBusQuery) {
-      const prompt = `You are VAANI, an expert on Tamil Nadu government bus services (TNSTC, MTC, SETC).
-User asked in ${language}: "${message}"
-
-Give accurate information about:
-- Bus routes and numbers if mentioned
-- Approximate timings based on TNSTC/MTC schedules
-- How to check real-time bus info via: 
-  * TNSTC website: www.tnstc.in
-  * MTC Chennai app
-  * Call TNSTC: 044-24794000
-
-Answer ONLY in ${language} language. Keep under 100 words. Be specific and helpful.`;
-
-      const geminiRes = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ role: 'user', parts: [{ text: prompt }] }],
-            generationConfig: { maxOutputTokens: 400, temperature: 0.5 }
-          })
-        }
-      );
-      const geminiData = await geminiRes.json();
-      const reply = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, could not get bus info.';
-      return res.status(200).json({ reply: reply.trim() });
+      const busPrompt = `You are VAANI, an expert on Tamil Nadu government bus services (TNSTC, MTC, SETC).
+You MUST reply ONLY in ${language} language — no English at all.
+User asked: "${message}"
+Give accurate info about bus routes/timings. Mention: TNSTC website www.tnstc.in, MTC Chennai app, TNSTC helpline 044-24794000. Under 100 words.`;
+      const reply = await callGemini(busPrompt);
+      return res.status(200).json({ reply });
     }
 
-    // ALL OTHER QUERIES — General Gemini
+    // GENERAL QUERY
     const prompt = `You are VAANI. The user is speaking in ${language}.
 You MUST reply ONLY in ${language} language — no English at all.
-Answer questions about Indian government services: ration cards, hospitals, bus timings, Aadhaar, PAN card, schemes.
+Answer questions about Indian government services: ration cards, hospitals, bus timings, Aadhaar, PAN card, government schemes, Tamil Nadu welfare schemes.
+Give accurate, helpful, specific answers with helpline numbers where relevant.
+Keep answer under 100 words.
 User question: ${message}`;
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          generationConfig: { maxOutputTokens: 400, temperature: 0.5 }
-        })
-      }
-    );
-
-    const data = await geminiRes.json();
-    if (!geminiRes.ok || data.error) {
-      console.error('Gemini API error:', data);
-      return res.status(500).json({ error: 'Gemini API error: ' + (data.error?.message || 'Unknown server error') });
-    }
-
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
-    if (!reply) {
-      return res.status(500).json({ error: 'No reply from Gemini', raw: JSON.stringify(data) });
-    }
-
-    return res.status(200).json({ reply: reply.trim() });
+    const reply = await callGemini(prompt);
+    return res.status(200).json({ reply });
 
   } catch (err) {
-    return res.status(500).json({ error: 'Server error: ' + err.message });
+    console.error('Handler error:', err.message);
+    return res.status(500).json({ error: err.message });
   }
 };
 
-// Calculate distance between two coordinates in km
 function getDistance(lat1, lon1, lat2, lon2) {
   const R = 6371;
-  const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
     Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return (R * c).toFixed(1);
-}
-
-function deg2rad(deg) {
-  return deg * (Math.PI / 180);
+  return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))).toFixed(1);
 }
 
 module.exports = handler;
