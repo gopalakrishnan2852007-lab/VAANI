@@ -15,9 +15,22 @@ const handler = async (req, res) => {
     return res.status(500).json({ error: 'API key not configured on server' });
   }
 
-  const prompt = `You are VAANI, a helpful Indian government services assistant.
-Answer ONLY in ${language} language. Keep answers under 80 words. Be simple and clear.
-Help with: ration cards, hospitals, bus timings, Aadhaar, PAN card, government schemes.
+  const prompt = `You are VAANI, an expert Indian government services assistant who gives accurate, helpful, and specific answers.
+
+User is speaking in ${language}. You MUST answer ONLY in ${language} language.
+
+Rules:
+- Give ACCURATE and SPECIFIC information about Indian government services
+- If asked about ration shop items: explain what items are available (rice, wheat, dal, sugar, kerosene), how to check eligibility, and how to get them
+- If asked about hospitals: mention government hospitals, how to register, free treatment schemes like Ayushman Bharat
+- If asked about bus timings: suggest checking local RTC website or app, and give general guidance
+- If asked about Aadhaar: explain update process, enrollment centers, helpline 1947
+- If asked about PAN card: explain how to apply on NSDL/UTIITSL website
+- If asked about government schemes: give accurate scheme names and benefits
+- Keep answers under 100 words
+- Be helpful, warm, and clear
+- NEVER give vague or incomplete answers
+
 User question: ${message}`;
 
   try {
@@ -34,8 +47,8 @@ User question: ${message}`;
             }
           ],
           generationConfig: {
-            maxOutputTokens: 300,
-            temperature: 0.7
+            maxOutputTokens: 400,
+            temperature: 0.5
           }
         })
       }
