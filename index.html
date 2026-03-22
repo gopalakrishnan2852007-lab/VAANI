@@ -8,15 +8,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Noto+Sans+Tamil&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --saffron: #FF6B00;
-      --deep: #0A0A1A;
-      --card: #13132A;
-      --border: #2A2A4A;
+      --saffron: #2979FF;
+      --deep: #050A18;
+      --card: #0A1628;
+      --border: #1A2A4A;
       --green: #00E676;
       --red: #FF4444;
       --text: #E8E8FF;
       --muted: #7878AA;
-      --pulse: #FF6B00;
+      --pulse: #2979FF;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,8 +37,8 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse 60% 40% at 20% 20%, rgba(255,107,0,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 50% at 80% 80%, rgba(0,100,255,0.06) 0%, transparent 60%);
+        radial-gradient(ellipse 60% 40% at 20% 20%, rgba(30,100,255,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 80% 80%, rgba(30,100,255,0.08) 0%, transparent 60%);
       pointer-events: none;
       z-index: 0;
     }
@@ -519,9 +519,13 @@
         body: JSON.stringify({ message: text, language: selectedLangName, langCode: selectedLang })
       });
 
-      if (!res.ok) throw new Error('Server error: ' + res.status);
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Server error: ' + res.status);
+      }
 
       const data = await res.json();
+      if (data.error) throw new Error(data.error);
       lastResponse = data.reply;
       document.getElementById('responseText').textContent = data.reply;
       document.getElementById('responseCard').classList.add('visible');
@@ -537,11 +541,16 @@
   }
 
   function speakResponse() {
-    if (!lastResponse) return;
+    if (!lastResponse || !window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(lastResponse);
     utter.lang = selectedLang;
-    utter.rate = 0.9;
+    utter.rate = 0.85;
+    const voices = window.speechSynthesis.getVoices();
+    const voice = voices.find(v => v.lang === selectedLang)
+      || voices.find(v => v.lang.startsWith(selectedLang.split('-')[0]))
+      || null;
+    if (voice) utter.voice = voice;
     window.speechSynthesis.speak(utter);
   }
 
