@@ -1,0 +1,12 @@
+{
+  "name": "vaani",
+  "version": "1.0.0",
+  "description": "VAANI - Voice Assisted Accessible Native Interface",
+  "main": "index.html",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "vercel dev"
+  }
+}
