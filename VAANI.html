@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAANI — Voice Assistant for Local Languages</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Tamil&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --saffron: #FF6B00;
+            --saffron2: rgba(255, 107, 0, 0.15);
+            --green: #00875A;
+            --green2: rgba(0, 135, 90, 0.15);
+            --blue: #0047AB;
+            --blue2: rgba(0, 71, 171, 0.12);
+            --bg: #F8F9FF;
+            --card: #FFFFFF;
+            --dark: #1A1A2E;
+            --text: #2D3748;
+            --dim: #718096;
+            --border: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 40%, #0047AB 100%);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 3px;
+        }
+
+        .logo-text p {
+            font-size: 10px;
+            opacity: 0.85;
+            letter-spacing: 1px;
+        }
+
+        .tagline {
+            color: white;
+            font-size: 11px;
+            opacity: 0.9;
+            text-align: right;
+            font-style: italic;
+        }
+
+        /* MAIN */
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+
+        /* LANGUAGE SELECTOR */
+        .lang-section {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px var(--border);
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--dim);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .lang-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .lang-btn:hover {
+            border-color: var(--saffron);
+            background: var(--saffron2);
+        }
+
+        .lang-btn.active {
+            border-color: var(--saffron);
+            background: var(--saffron2);
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
+        }
+
+        .lang-native {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            display: block;
+        }
+
+        .lang-english {
+            font-size: 11px;
+            color: var(--dim);
+            margin-top: 2px;
+            display: block;
+        }
+
+        /* SERVICE CHIPS */
+        .service-section {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px var(--border);
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chip {
+            padding: 6px 14px;
+            border-radius: 100px;
+            border: 1.5px solid var(--border);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            color: var(--text);
+        }
+
+        .chip:hover {
+            border-color: var(--blue);
+            background: var(--blue2);
+        }
+
+        .chip.active {
+            border-color: var(--blue);
+            background: var(--blue2);
+            color: var(--blue);
+            font-weight: 600;
+        }
+
+        /* MIC BUTTON */
+        .mic-section {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 28px 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px var(--border);
+            text-align: center;
+        }
+
+        .mic-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .mic-btn {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--saffron), #FF4500);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            box-shadow: 0 8px 24px rgba(255, 107, 0, 0.4);
+            transition: all 0.2s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .mic-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .mic-btn.listening {
+            background: linear-gradient(135deg, #E8192C, #B01020);
+            box-shadow: 0 8px 24px rgba(232, 25, 44, 0.5);
+            animation: micpulse 1s ease-in-out infinite;
+        }
+
+        @keyframes micpulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.08);
+            }
+        }
+
+        .mic-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: rgba(255, 107, 0, 0.2);
+            animation: ringout 2s ease-out infinite;
+            z-index: 1;
+        }
+
+        .mic-ring2 {
+            animation-delay: 0.7s;
+        }
+
+        @keyframes ringout {
+            from {
+                width: 90px;
+                height: 90px;
+                opacity: 0.6;
+            }
+
+            to {
+                width: 150px;
+                height: 150px;
+                opacity: 0;
+            }
+        }
+
+        .mic-status {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dim);
+            margin-bottom: 6px;
+        }
+
+        .mic-hint {
+            font-size: 11px;
+            color: var(--dim);
+            opacity: 0.7;
+        }
+
+        /* TRANSCRIPT */
+        .transcript-section {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px var(--border);
+            display: none;
+        }
+
+        .transcript-section.show {
+            display: block;
+        }
+
+        .transcript-box {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 14px;
+            color: var(--text);
+            min-height: 50px;
+            border-left: 3px solid var(--saffron);
+            margin-bottom: 10px;
+        }
+
+        .you-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--saffron);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        /* RESPONSE */
+        .response-section {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px var(--border);
+            display: none;
+        }
+
+        .response-section.show {
+            display: block;
+        }
+
+        .response-box {
+            background: linear-gradient(135deg, rgba(0, 71, 171, 0.05), rgba(0, 135, 90, 0.05));
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text);
+            border-left: 3px solid var(--blue);
+            margin-bottom: 12px;
+        }
+
+        .vaani-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--blue);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .speak-btn {
+            width: 100%;
+            padding: 10px;
+            background: var(--blue2);
+            border: 1.5px solid var(--blue);
+            border-radius: 10px;
+            color: var(--blue);
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .speak-btn:hover {
+            background: var(--blue);
+            color: white;
+        }
+
+        /* LOADING */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            background: var(--saffron);
+            border-radius: 50%;
+            animation: bounce 1.2s ease-in-out infinite;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+            background: var(--blue);
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+            background: var(--green);
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        /* HISTORY */
+        .history-section {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 80px;
+            box-shadow: 0 2px 12px var(--border);
+            display: none;
+        }
+
+        .history-section.show {
+            display: block;
+        }
+
+        .history-item {
+            border-bottom: 1px solid var(--border);
+            padding: 12px 0;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-q {
+            font-size: 12px;
+            color: var(--saffron);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .history-a {
+            font-size: 12px;
+            color: var(--dim);
+            line-height: 1.5;
+        }
+
+        /* BOTTOM NAV */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .clear-btn {
+            padding: 10px 24px;
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: 100px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            cursor: pointer;
+            color: var(--dim);
+            transition: all 0.2s;
+        }
+
+        .clear-btn:hover {
+            border-color: var(--saffron);
+            color: var(--saffron);
+        }
+
+        .ask-btn {
+            padding: 10px 28px;
+            background: linear-gradient(135deg, var(--saffron), #FF4500);
+            border: none;
+            border-radius: 100px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+            transition: all 0.2s;
+        }
+
+        .ask-btn:hover {
+            transform: scale(1.03);
+        }
+
+        /* INDIA FLAG STRIPE */
+        .flag-stripe {
+            height: 4px;
+            background: linear-gradient(90deg, #FF6B00 33%, white 33%, white 66%, #0047AB 66%);
+        }
+
+        /* TRICOLOR BADGE */
+        .tricolor {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .tc {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Error */
+        .error-box {
+            background: rgba(232, 25, 44, 0.08);
+            border: 1px solid rgba(232, 25, 44, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 13px;
+            color: #E8192C;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .error-box.show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="flag-stripe"></div>
+
+    <header>
+        <div class="logo">
+            <div class="logo-icon">🎙️</div>
+            <div class="logo-text">
+                <h1>VAANI</h1>
+                <p>VOICE ASSISTED ACCESSIBLE NATIVE INTERFACE</p>
+            </div>
+        </div>
+        <div class="tagline">"Speak Your Language.<br>Access Your World."</div>
+    </header>
+
+    <div class="container">
+
+        <!-- LANGUAGE SELECT -->
+        <div class="lang-section">
+            <div class="section-title">🌐 Select Your Language / மொழி தேர்வு</div>
+            <div class="lang-grid">
+                <button class="lang-btn active" onclick="setLang('ta', this)">
+                    <span class="lang-native">தமிழ்</span>
+                    <span class="lang-english">Tamil</span>
+                </button>
+                <button class="lang-btn" onclick="setLang('hi', this)">
+                    <span class="lang-native">हिन्दी</span>
+                    <span class="lang-english">Hindi</span>
+                </button>
+                <button class="lang-btn" onclick="setLang('te', this)">
+                    <span class="lang-native">తెలుగు</span>
+                    <span class="lang-english">Telugu</span>
+                </button>
+                <button class="lang-btn" onclick="setLang('ml', this)">
+                    <span class="lang-native">മലയാളം</span>
+                    <span class="lang-english">Malayalam</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SERVICE CHIPS -->
+        <div class="service-section">
+            <div class="section-title">🏛️ Quick Topics / விரைவு தலைப்புகள்</div>
+            <div class="chips">
+                <button class="chip" onclick="quickAsk(this)">🍚 Ration Card</button>
+                <button class="chip" onclick="quickAsk(this)">🏥 Hospital</button>
+                <button class="chip" onclick="quickAsk(this)">🚌 Bus Routes</button>
+                <button class="chip" onclick="quickAsk(this)">🪪 Aadhaar</button>
+                <button class="chip" onclick="quickAsk(this)">💰 Government Schemes</button>
+                <button class="chip" onclick="quickAsk(this)">📋 PAN Card</button>
+                <button class="chip" onclick="quickAsk(this)">🌾 Farmer Help</button>
+                <button class="chip" onclick="quickAsk(this)">🎓 Scholarship</button>
+            </div>
+        </div>
+
+        <!-- MIC BUTTON -->
+        <div class="mic-section">
+            <div class="mic-wrapper">
+                <div class="mic-ring" id="ring1"></div>
+                <div class="mic-ring mic-ring2" id="ring2"></div>
+                <button class="mic-btn" id="micBtn" onclick="toggleMic()">🎤</button>
+            </div>
+            <div class="mic-status" id="micStatus">Tap to speak / பேச தட்டவும்</div>
+            <div class="mic-hint" id="micHint">Ask anything about government services</div>
+        </div>
+
+        <!-- LOADING -->
+        <div class="loading" id="loading">
+            <div class="dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <div style="font-size:13px;color:var(--dim)">VAANI is thinking... / யோசிக்கிறேன்...</div>
+        </div>
+
+        <!-- TRANSCRIPT -->
+        <div class="transcript-section" id="transcriptSection">
+            <div class="you-label">🎤 YOU SAID</div>
+            <div class="transcript-box" id="transcriptBox"></div>
+            <div class="error-box" id="errorBox"></div>
+        </div>
+
+        <!-- RESPONSE -->
+        <div class="response-section" id="responseSection">
+            <div class="vaani-label">🤖 VAANI SAYS</div>
+            <div class="response-box" id="responseBox"></div>
+            <button class="speak-btn" onclick="speakResponse()">🔊 Read Aloud /声に出して読む</button>
+        </div>
+
+        <!-- HISTORY -->
+        <div class="history-section" id="historySection">
+            <div class="section-title">📜 Conversation History</div>
+            <div id="historyList"></div>
+        </div>
+
+    </div>
+
+    <!-- BOTTOM BAR -->
+    <div class="bottom-bar">
+        <button class="clear-btn" onclick="clearAll()">🗑️ Clear</button>
+        <button class="ask-btn" onclick="toggleMic()">🎤 Ask VAANI</button>
+    </div>
+
+    <script>
+        // =============================================
+        // REPLACE WITH YOUR GEMINI API KEY
+        // Get free key at: aistudio.google.com
+        // =============================================
+        const GEMINI_API_KEY = 'AIzaSyAWPSP_ly9GLUtmRx8bSbqoZ3F8ZA3WsGc';
+
+        // =============================================
+        let currentLang = 'ta';
+        let recognition = null;
+        let isListening = false;
+        let currentResponse = '';
+        let history = [];
+
+        const langConfig = {
+            'ta': { name: 'Tamil', code: 'ta-IN', greeting: 'வணக்கம்! நான் வாணி. உங்கள் கேள்வியை கேளுங்கள்.' },
+            'hi': { name: 'Hindi', code: 'hi-IN', greeting: 'नमस्ते! मैं वाणी हूं। अपना सवाल पूछें।' },
+            'te': { name: 'Telugu', code: 'te-IN', greeting: 'నమస్కారం! నేను వాణి. మీ ప్రశ్న అడగండి.' },
+            'ml': { name: 'Malayalam', code: 'ml-IN', greeting: 'നമസ്കാരം! ഞാൻ വാണി. നിങ്ങളുടെ ചോദ്യം ചോദിക്കൂ.' },
+        };
+
+        const systemPrompts = {
+            'ta': `நீங்கள் VAANI என்ற AI உதவியாளர். தமிழ் மக்களுக்கு அரசு சேவைகள் பற்றி தமிழிலேயே தெளிவாக விளக்குங்கள். 
+  ரேஷன் கார்டு, மருத்துவமனை, பஸ் வழித்தடங்கள், ஆதார், பான் கார்டு, விவசாயி திட்டங்கள், கல்வி உதவித்தொகை போன்றவற்றை எளிய தமிழில் விளக்குங்கள்.
+  எப்போதும் தமிழிலேயே பதில் தாருங்கள். சுருக்கமாகவும் தெளிவாகவும் பதில் தாருங்கள்.`,
+            'hi': `आप VAANI नाम के AI सहायक हैं। हिंदी भाषी लोगों को सरकारी सेवाओं के बारे में हिंदी में स्पष्ट रूप से समझाएं।
+  राशन कार्ड, अस्पताल, बस मार्ग, आधार, पैन कार्ड, किसान योजनाएं, छात्रवृत्ति आदि के बारे में सरल हिंदी में बताएं।
+  हमेशा हिंदी में ही जवाब दें। संक्षेप में और स्पष्ट रूप से जवाब दें।`,
+            'te': `మీరు VAANI అనే AI సహాయకుడు. తెలుగు ప్రజలకు ప్రభుత్వ సేవల గురించి తెలుగులో స్పష్టంగా వివరించండి.
+  రేషన్ కార్డు, ఆసుపత్రి, బస్సు మార్గాలు, ఆధార్, పాన్ కార్డు, రైతు పథకాలు, విద్యార్థి వేతనాల గురించి సులభమైన తెలుగులో చెప్పండి.
+  ఎల్లప్పుడూ తెలుగులోనే జవాబు ఇవ్వండి. సంక్షిప్తంగా మరియు స్పష్టంగా జవాబు ఇవ్వండి.`,
+            'ml': `നിങ്ങൾ VAANI എന്ന AI അസിസ്റ്റന്റ് ആണ്. മലയാളം സംസാരിക്കുന്ന ആളുകൾക്ക് സർക്കാർ സേവനങ്ങളെക്കുറിച്ച് മലയാളത്തിൽ വ്യക്തമായി വിശദീകരിക്കുക.
+  റേഷൻ കാർഡ്, ആശുപത്രി, ബസ് റൂട്ടുകൾ, ആധാർ, പാൻ കാർഡ്, കർഷക പദ്ധതികൾ, സ്കോളർഷിപ്പ് എന്നിവയെക്കുറിച്ച് ലളിതമായ മലയാളത്തിൽ പറയുക.
+  എല്ലായ്പ്പോഴും മലയാളത്തിൽ ഉത്തരം നൽകുക. ചുരുക്കത്തിലും വ്യക്തമായും ഉത്തരം നൽകുക.`,
+        };
+
+        // SET LANGUAGE
+        function setLang(lang, btn) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('micStatus').textContent = langConfig[lang].greeting.substring(0, 30) + '...';
+            speak(langConfig[lang].greeting, lang);
+        }
+
+        // TOGGLE MIC
+        function toggleMic() {
+            if (isListening) {
+                stopListening();
+            } else {
+                startListening();
+            }
+        }
+
+        function startListening() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                showError('Your browser does not support speech recognition. Please use Chrome.');
+                return;
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = langConfig[currentLang].code;
+            recognition.continuous = false;
+            recognition.interimResults = true;
+
+            recognition.onstart = () => {
+                isListening = true;
+                document.getElementById('micBtn').classList.add('listening');
+                document.getElementById('micBtn').textContent = '⏹️';
+                document.getElementById('micStatus').textContent = 'Listening... / கேட்கிறேன்...';
+                document.getElementById('micHint').textContent = 'Speak now — I am listening!';
+            };
+
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
+                showTranscript(transcript);
+                if (event.results[event.results.length - 1].isFinal) {
+                    stopListening();
+                    getAIResponse(transcript);
+                }
+            };
+
+            recognition.onerror = (event) => {
+                stopListening();
+                showError('Could not hear clearly. Please try again. / மீண்டும் முயலவும்.');
+            };
+
+            recognition.onend = () => {
+                stopListening();
+            };
+
+            recognition.start();
+        }
+
+        function stopListening() {
+            isListening = false;
+            if (recognition) recognition.stop();
+            document.getElementById('micBtn').classList.remove('listening');
+            document.getElementById('micBtn').textContent = '🎤';
+            document.getElementById('micStatus').textContent = 'Tap to speak / பேச தட்டவும்';
+            document.getElementById('micHint').textContent = 'Ask anything about government services';
+        }
+
+        // SHOW TRANSCRIPT
+        function showTranscript(text) {
+            document.getElementById('transcriptSection').classList.add('show');
+            document.getElementById('transcriptBox').textContent = text;
+            document.getElementById('errorBox').classList.remove('show');
+        }
+
+        // SHOW ERROR
+        function showError(msg) {
+            document.getElementById('transcriptSection').classList.add('show');
+            document.getElementById('errorBox').textContent = msg;
+            document.getElementById('errorBox').classList.add('show');
+        }
+
+        // GET AI RESPONSE
+        async function getAIResponse(userText) {
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('responseSection').classList.remove('show');
+
+            try {
+                const prompt = systemPrompts[currentLang] + '\n\nUser question: ' + userText;
+
+                const response = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }],
+                            generationConfig: { maxOutputTokens: 500, temperature: 0.7 }
+                        })
+                    }
+                );
+
+                const data = await response.json();
+                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, could not get response.';
+
+                document.getElementById('loading').classList.remove('show');
+                showResponse(aiText);
+                addToHistory(userText, aiText);
+                speak(aiText, currentLang);
+
+            } catch (error) {
+                document.getElementById('loading').classList.remove('show');
+                showError('Network error. Please check internet connection. / இணைப்பு பிழை.');
+            }
+        }
+
+        // SHOW RESPONSE
+        function showResponse(text) {
+            currentResponse = text;
+            document.getElementById('responseSection').classList.add('show');
+            document.getElementById('responseBox').textContent = text;
+        }
+
+        // TEXT TO SPEECH
+        function speak(text, lang) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = langConfig[lang || currentLang].code;
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function speakResponse() {
+            speak(currentResponse, currentLang);
+        }
+
+        // QUICK ASK
+        function quickAsk(btn) {
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            const topic = btn.textContent.trim().replace(/^[^ ]+ /, '');
+
+            const queries = {
+                'ta': {
+                    'Ration Card': 'ரேஷன் கார்டு எப்படி பெறுவது?',
+                    'Hospital': 'அரசு மருத்துவமனையில் இலவச சிகிச்சை எப்படி பெறுவது?',
+                    'Bus Routes': 'அரசு பஸ் வழித்தட தகவல் எங்கே கிடைக்கும்?',
+                    'Aadhaar': 'ஆதார் கார்டு திருத்தம் எப்படி செய்வது?',
+                    'Government Schemes': 'தமிழ்நாடு அரசு திட்டங்கள் என்னென்ன?',
+                    'PAN Card': 'பான் கார்டு எப்படி விண்ணப்பிப்பது?',
+                    'Farmer Help': 'விவசாயிகளுக்கான அரசு திட்டங்கள் என்னென்ன?',
+                    'Scholarship': 'மாணவர்களுக்கான உதவித்தொகை எப்படி பெறுவது?',
+                },
+                'hi': {
+                    'Ration Card': 'राशन कार्ड कैसे बनवाएं?',
+                    'Hospital': 'सरकारी अस्पताल में मुफ्त इलाज कैसे मिलेगा?',
+                    'Bus Routes': 'सरकारी बस की जानकारी कहाँ मिलेगी?',
+                    'Aadhaar': 'आधार कार्ड में सुधार कैसे करें?',
+                    'Government Schemes': 'सरकारी योजनाएं कौन-कौन सी हैं?',
+                    'PAN Card': 'पैन कार्ड के लिए आवेदन कैसे करें?',
+                    'Farmer Help': 'किसानों के लिए सरकारी योजनाएं क्या हैं?',
+                    'Scholarship': 'छात्रवृत्ति कैसे मिलेगी?',
+                }
+            };
+
+            const langQueries = queries[currentLang] || queries['ta'];
+            const query = langQueries[topic] || topic + ' के बारे में बताएं';
+
+            showTranscript(query);
+            getAIResponse(query);
+        }
+
+        // HISTORY
+        function addToHistory(q, a) {
+            history.unshift({ q, a });
+            if (history.length > 5) history.pop();
+
+            const historySection = document.getElementById('historySection');
+            const historyList = document.getElementById('historyList');
+            historySection.classList.add('show');
+            historyList.innerHTML = history.map(item => `
+    <div class="history-item">
+      <div class="history-q">🎤 ${item.q}</div>
+      <div class="history-a">🤖 ${item.a.substring(0, 100)}${item.a.length > 100 ? '...' : ''}</div>
+    </div>
+  `).join('');
+        }
+
+        // CLEAR ALL
+        function clearAll() {
+            history = [];
+            currentResponse = '';
+            document.getElementById('transcriptSection').classList.remove('show');
+            document.getElementById('responseSection').classList.remove('show');
+            document.getElementById('historySection').classList.remove('show');
+            document.getElementById('loading').classList.remove('show');
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            window.speechSynthesis.cancel();
+        }
+
+        // Auto greet on load
+        window.onload = () => {
+            setTimeout(() => {
+                speak(langConfig['ta'].greeting, 'ta');
+            }, 800);
+        };
+    </script>
+</body>
+
+</html>
