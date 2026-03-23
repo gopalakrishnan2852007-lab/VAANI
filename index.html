@@ -256,6 +256,8 @@
       padding: 18px;
       margin-bottom: 16px;
       display: none;
+      max-height: 60vh;
+      overflow-y: auto;
     }
 
     .response-card.visible { display: block; }
@@ -293,6 +295,8 @@
       font-size: 16px;
       line-height: 1.7;
       color: var(--text);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     /* Error */
@@ -436,6 +440,8 @@
   let recognition = null;
   let isRecording = false;
   let lastResponse = '';
+  let timerInterval = null;
+  let timerSeconds = 0;
 
   function selectLang(btn) {
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
@@ -468,9 +474,17 @@
       isRecording = true;
       document.getElementById('micBtn').classList.add('recording');
       document.getElementById('micBtn').textContent = '⏹️';
-      document.getElementById('micStatus').textContent = 'Listening… speak now';
       document.getElementById('micStatus').className = 'mic-status recording';
       hideError();
+
+      timerSeconds = 0;
+      document.getElementById('micStatus').textContent = `🔴 Recording... 0:00`;
+      timerInterval = setInterval(() => {
+        timerSeconds++;
+        const mins = Math.floor(timerSeconds / 60);
+        const secs = timerSeconds % 60;
+        document.getElementById('micStatus').textContent = `🔴 Recording... ${mins}:${secs.toString().padStart(2, '0')}`;
+      }, 1000);
     };
 
     recognition.onresult = (e) => {
@@ -486,6 +500,11 @@
       document.getElementById('micBtn').textContent = '🎙️';
       document.getElementById('micStatus').textContent = 'Tap to speak';
       document.getElementById('micStatus').className = 'mic-status';
+
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
 
       const text = document.getElementById('transcriptBox').textContent;
       if (text && text !== 'Your voice will appear here…') {
