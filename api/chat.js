@@ -29,7 +29,7 @@ const handler = async (req, res) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          generationConfig: { maxOutputTokens: 400, temperature: 0.5 }
+          generationConfig: { maxOutputTokens: 1024, temperature: 0.5 }
         })
       }
     );
@@ -92,9 +92,11 @@ const handler = async (req, res) => {
         ? `You are VAANI. The user asked about nearby hospitals. You MUST reply ONLY in ${language} language — no English at all.
 Here are the nearest hospitals found:
 ${hospitals.join('\n')}
-Format this as a helpful warm response in ${language}. List hospitals with distances. Also mention free medical helpline 104. Under 120 words.`
+Format this as a helpful warm response in ${language}. List hospitals with distances. Also mention free medical helpline 104.
+Always write complete sentences. Never stop mid-sentence. Maximum 150 words.`
         : `You are VAANI. The user asked about hospitals but none were found nearby. You MUST reply ONLY in ${language} language — no English at all.
-Tell them to: call Tamil Nadu health helpline 104, visit nearest PHC, or check tnhealth.tn.gov.in. Under 80 words.`;
+Tell them to: call Tamil Nadu health helpline 104, visit nearest PHC, or check tnhealth.tn.gov.in.
+Always write complete sentences. Never stop mid-sentence. Maximum 100 words.`;
 
       const reply = await callGemini(hospitalPrompt);
       return res.status(200).json({ reply, hospitals });
@@ -105,7 +107,9 @@ Tell them to: call Tamil Nadu health helpline 104, visit nearest PHC, or check t
       const busPrompt = `You are VAANI, an expert on Tamil Nadu government bus services (TNSTC, MTC, SETC).
 You MUST reply ONLY in ${language} language — no English at all.
 User asked: "${message}"
-Give accurate info about bus routes/timings. Mention: TNSTC website www.tnstc.in, MTC Chennai app, TNSTC helpline 044-24794000. Under 100 words.`;
+Give accurate and complete info about bus routes and timings.
+Mention: TNSTC website www.tnstc.in, MTC Chennai app, TNSTC helpline 044-24794000.
+Always write complete sentences. Never stop mid-sentence. Maximum 150 words.`;
       const reply = await callGemini(busPrompt);
       return res.status(200).json({ reply });
     }
@@ -115,7 +119,7 @@ Give accurate info about bus routes/timings. Mention: TNSTC website www.tnstc.in
 You MUST reply ONLY in ${language} language — no English at all.
 Answer questions about Indian government services: ration cards, hospitals, bus timings, Aadhaar, PAN card, government schemes, Tamil Nadu welfare schemes.
 Give accurate, helpful, specific answers with helpline numbers where relevant.
-Keep answer under 100 words.
+Always write complete sentences. Never stop mid-sentence. Maximum 150 words.
 User question: ${message}`;
 
     const reply = await callGemini(prompt);
